@@ -38,18 +38,62 @@ export function readJsonBody(req) {
 }
 
 export function handleCalculate(body) {
-    // TODO: Validate that operation, a, and b are present.
-    // TODO: Validate that a and b are numbers.
-    // TODO: Support add, subtract, multiply, and divide.
-    // TODO: Return an error for unsupported operations.
-    // TODO: Return an error for division by zero.
+    const { operation, a, b } = body;
 
+    // TODO: Validate that operation, a, and b are present.
+    if (operation === undefined || a === undefined || b === undefined) {
+        return { statusCode: 400, response: { error: "Missing required fields: operation, a, and b are required" }};
+    }
+
+    // TODO: Validate that a and b are numbers.
+    if (typeof a !== "number" || typeof b !== "number") {
+        return { statusCode: 400, response: { error: "a and/or b are not valid. They must be numbers." }};
+    }    
+    
+    // TODO: Support add, subtract, multiply, and divide.
+    switch (operation) {
+
+        // TODO: implement add
+        // Example:
+        // 2 + 2
+        case "add":
+            return { statusCode: 200, response: { result: a + b }};
+
+        // TODO: implement subtract
+        // Example:
+        // 2 - 2
+        case "subtract":
+            return { statusCode: 200, response: { result: a - b }};
+
+        // TODO: implement multiply
+        // Example:
+        // 2 * 2
+        case "multiply":
+            return { statusCode: 200, response: { result: a * b }};
+
+        // TODO: implement divide
+        // // Example:
+        // 2 / 2
+        case "divide":
+            // TODO: Return an error for division by zero.
+            if (b === 0) {
+                return { statusCode: 400, response: { error: "Divsion by zero ERROR." }};        
+            }
+            return { statusCode: 200, response: { result: a / b }};
+
+        // TODO: Return an error for unsupported operations.
+        default:
+            return { statusCode: 400, response: { error: `ERROR unknown operation: ${operation}` }};
+    }
+
+    /*
     return {
         statusCode: 501,
         response: {
             error: "Calculation not implemented yet"
         }
     };
+    */
 }
 
 export async function requestHandler(req, res) {
@@ -65,7 +109,10 @@ export async function requestHandler(req, res) {
 
     if (method === "GET" && url === "/requests") {
         // TODO: Return the current request count as JSON.
-        sendJson(res, 501, { error: "Request counter not implemented yet" });
+        // BEFORE
+        // sendJson(res, 501, { error: "Request counter not implemented yet" });
+        // AFTER
+        sendJson(res, 200, { count: requestCount });        
         return;
     }
 
@@ -74,7 +121,10 @@ export async function requestHandler(req, res) {
             const body = await readJsonBody(req);
 
             // TODO: Return the parsed JSON body back to the client.
-            sendJson(res, 501, { error: "Echo not implemented yet" });
+            // BEFORE
+            // sendJson(res, 501, { error: "Echo not implemented yet" });
+            // AFTER
+            sendJson(res, 200, body);
         } catch {
             sendJson(res, 400, { error: "Invalid JSON" });
         }
@@ -114,3 +164,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         console.log(`HTTP JSON server listening on port ${port}`);
     });
 }
+
+// Start the server unconditionally.
+// The import.meta.url check above is unreliable on Windows with Git Bash
+// due to path formatting differences, so this block ensures the server
+// always starts when the file is run directly with node.
+const port = process.env.PORT || DEFAULT_PORT;
+const server = createServer();
+server.listen(port, () => {
+    console.log(`HTTP JSON server listening on port ${port}`);
+});
