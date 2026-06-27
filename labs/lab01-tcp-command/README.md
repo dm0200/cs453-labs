@@ -178,9 +178,16 @@ npm run test:watch
 Answer the following questions in your submission:
 
 1. What is the difference between the client and the server?
+The server handles requests from the client and processes the request to execute the request. The client sends a request or a command to the server.
+
 2. Why does the server need to keep running after handling one request?
+The server needs to keep running after handling one request to handle multiple commands from the client and accept additional connections.
+
 3. What happens if two clients connect at the same time?
+Both clients successfully connect while the server handles both clients messages one at a time.
+
 4. How is this different from HTTP?
+TCP allows the connection to stay open whereas HTTP closes after each request. HTTP uses a structured format & this TCP uses plain text.
 
 ## Submission
 
